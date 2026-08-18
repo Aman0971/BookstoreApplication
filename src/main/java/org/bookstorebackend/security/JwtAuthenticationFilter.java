@@ -28,8 +28,7 @@ import java.util.List;
                 FilterChain filterChain)
                 throws ServletException, IOException {
 
-            String authorizationHeader =
-                    request.getHeader("Authorization");
+            String authorizationHeader = request.getHeader("Authorization");
 
             if (authorizationHeader == null ||
                     !authorizationHeader.startsWith("Bearer ")) {
@@ -64,10 +63,8 @@ import java.util.List;
                 }
 
             } catch (Exception e) {
-
                 SecurityContextHolder.clearContext();
             }
-
             filterChain.doFilter(request, response);
         }
     }

@@ -67,8 +67,8 @@ public class SecurityConfig {
 
                         // Public APIs
                         .requestMatchers(
-                                "/api/users/register",
-                                "/api/users/login",
+                                "/api/user/register",
+                                "/api/user/login",
                                 "/api/admin/register",
                                 "/api/admin/login",
 
@@ -80,6 +80,10 @@ public class SecurityConfig {
                         // Admin APIs
                         .requestMatchers("/api/admin/**")
                         .hasRole("ADMIN")
+
+                        //User APIs
+                        .requestMatchers("/api/user/**")
+                        .hasRole("USER")
 
                         // Everything else
                         .anyRequest()

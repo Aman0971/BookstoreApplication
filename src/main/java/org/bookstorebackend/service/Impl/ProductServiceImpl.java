@@ -1,4 +1,4 @@
-package org.bookstorebackend.service;
+package org.bookstorebackend.service.Impl;
 
 import lombok.RequiredArgsConstructor;
 
