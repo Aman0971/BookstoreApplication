@@ -5,14 +5,19 @@ import lombok.RequiredArgsConstructor;
 import org.bookstorebackend.dto.request.AdminLoginRequestDTO;
 import org.bookstorebackend.dto.request.AdminRegistrationRequestDTO;
 import org.bookstorebackend.dto.response.LoginResponseDTO;
+import org.bookstorebackend.dto.response.OrderResponseDTO;
 import org.bookstorebackend.dto.response.RegisterResponseDTO;
+import org.bookstorebackend.entity.Order;
 import org.bookstorebackend.service.AdminService;
+import org.bookstorebackend.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.bookstorebackend.dto.request.ProductRequestDTO;
 import org.bookstorebackend.dto.response.ProductResponseDTO;
 import org.bookstorebackend.service.ProductService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -21,6 +26,8 @@ public class AdminController {
 
     private final AdminService adminService;
     private final ProductService productService;
+    private final OrderService orderService;
+
 
     // REGISTER
     @PostMapping("/register")
@@ -47,7 +54,7 @@ public class AdminController {
                 .body(response);
     }
 
-    // UPDATE BOOK
+    // UPDATE BOOK    we update quantity of book if the perticular book is out of stock
     @PutMapping("/update/book/{product_id}")
     public ResponseEntity<ProductResponseDTO> updateBook(
             @PathVariable("product_id") Long productId,
@@ -62,5 +69,12 @@ public class AdminController {
 
         productService.deleteBook(productId);
         return ResponseEntity.ok("Book deleted successfully");
+    }
+
+    //GET All ORDERS
+    @GetMapping("/get/orders")
+    public ResponseEntity<List<OrderResponseDTO>> getAllOrders(){
+        List<OrderResponseDTO>orders = orderService.getAllOrders();
+        return ResponseEntity.ok(orders);
     }
 }

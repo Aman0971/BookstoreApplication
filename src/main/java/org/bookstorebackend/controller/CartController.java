@@ -26,7 +26,7 @@ public class CartController {
     @PutMapping("/cart-quantity/{cartItemId}")
     public ResponseEntity<CartItemResponseDTO> updateQuantity(
                 @PathVariable Long cartItemId,
-                @RequestParam Integer quantity) {
+                @RequestParam Integer quantity) {  //we use this annotation , it helps to write quantity after ? in this api
 
             return ResponseEntity.ok(cartService.updateQuantity(cartItemId, quantity)
             );

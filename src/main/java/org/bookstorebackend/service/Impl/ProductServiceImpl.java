@@ -12,7 +12,9 @@ import org.bookstorebackend.service.ProductService;
 
 import org.springframework.stereotype.Service;
 
-    @Service
+import java.util.List;
+
+@Service
     @RequiredArgsConstructor
     public class ProductServiceImpl implements ProductService {
 
@@ -46,6 +48,14 @@ import org.springframework.stereotype.Service;
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
 
             productRepository.delete(product);
+        }
+
+        @Override
+        public List<ProductResponseDTO> getAllBooks(){
+            return productRepository.findAll()
+                    .stream()
+                    .map(productMapper::toResponse)
+                    .toList();
         }
     }
 
