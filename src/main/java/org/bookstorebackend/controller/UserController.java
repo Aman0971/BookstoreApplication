@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.bookstorebackend.dto.request.LoginRequestDTO;
 import org.bookstorebackend.dto.request.RegisterRequestDTO;
+import org.bookstorebackend.dto.request.UpdateUserRequestDTO;
 import org.bookstorebackend.dto.response.LoginResponseDTO;
 import org.bookstorebackend.dto.response.OrderResponseDTO;
 import org.bookstorebackend.dto.response.ProductResponseDTO;
@@ -60,5 +61,12 @@ public class UserController {
     @GetMapping("/get/books")
     public ResponseEntity<List<ProductResponseDTO>> getAllBooks(){
         return ResponseEntity.ok(productService.getAllBooks());
+    }
+
+    @PutMapping("/edit-user")
+    public ResponseEntity<String> updateUser(@Valid @RequestBody UpdateUserRequestDTO request) {
+
+        userService.updateUser(request);
+        return ResponseEntity.ok("User details updated successfully");
     }
 }

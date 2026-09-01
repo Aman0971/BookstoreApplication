@@ -34,9 +34,7 @@ import org.springframework.stereotype.Service;
             user.setLastName(request.getLastName());
             user.setEmail(request.getEmail());
 
-            user.setPassword(
-                    passwordEncoder.encode(request.getPassword())
-            );
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
 
             // IMPORTANT
             user.setRole(User.Role.ADMIN);

@@ -9,7 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class OrderResponseDTO {
-
     private Long orderId;
     private Long userId;
     private Double totalPrice;

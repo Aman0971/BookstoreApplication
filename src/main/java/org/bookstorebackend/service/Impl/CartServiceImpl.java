@@ -1,6 +1,9 @@
 package org.bookstorebackend.service.Impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.bookstorebackend.dto.request.AddMultipleCartRequestDTO;
+import org.bookstorebackend.dto.request.CartItemRequestDTO;
 import org.bookstorebackend.dto.response.CartItemResponseDTO;
 import org.bookstorebackend.entity.CartItem;
 import org.bookstorebackend.entity.Product;
@@ -14,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
     @Service
@@ -61,6 +65,70 @@ import java.util.List;
             CartItem savedCartItem = cartItemRepository.save(cartItem);
 
             return mapToResponse(savedCartItem);
+        }
+
+        @Override
+        @Transactional
+        public List<CartItemResponseDTO> addMultipleToCart(AddMultipleCartRequestDTO request) {
+
+            User user = getLoggedInUser();
+
+            List<CartItemResponseDTO> responseList = new ArrayList<>();
+
+            for (CartItemRequestDTO item : request.getItems()) {
+
+                Long productId = item.getProductId();
+                Integer requestedQuantity = item.getQuantity();
+
+                Product product = productRepository.findById(productId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Product not found with id: " + productId));
+
+                if (product.getQuantity() <= 0) {
+                    throw new RuntimeException(
+                            "Product is out of stock: " + product.getBookName());
+                }
+
+                CartItem cartItem = cartItemRepository
+                        .findByUserAndProduct(user, product)
+                        .orElse(null);
+
+                if (cartItem != null) {
+
+                    int newQuantity =
+                            cartItem.getQuantity() + requestedQuantity;
+
+                    if (newQuantity > product.getQuantity()) {
+                        throw new RuntimeException(
+                                "Requested quantity is not available for product: "
+                                        + product.getBookName());
+                    }
+
+                    cartItem.setQuantity(newQuantity);
+
+                } else {
+
+                    if (requestedQuantity > product.getQuantity()) {
+                        throw new RuntimeException(
+                                "Requested quantity is not available for product: "
+                                        + product.getBookName());
+                    }
+
+                    cartItem = CartItem.builder()
+                            .user(user)
+                            .product(product)
+                            .quantity(requestedQuantity)
+                            .build();
+                }
+
+                CartItem savedCartItem =
+                        cartItemRepository.save(cartItem);
+
+                responseList.add(mapToResponse(savedCartItem));
+            }
+
+            return responseList;
         }
 
         @Override
@@ -148,4 +216,6 @@ import java.util.List;
                     .totalPrice(product.getPrice() * cartItem.getQuantity())
                     .build();
         }
+
+
     }

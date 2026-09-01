@@ -1,5 +1,6 @@
 package org.bookstorebackend.mapper;
 import org.bookstorebackend.dto.request.RegisterRequestDTO;
+import org.bookstorebackend.dto.request.UpdateUserRequestDTO;
 import org.bookstorebackend.dto.response.RegisterResponseDTO;
 import org.bookstorebackend.entity.User;
 import org.springframework.stereotype.Component;

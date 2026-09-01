@@ -9,6 +9,8 @@ import org.bookstorebackend.entity.OrderItem;
 import org.bookstorebackend.entity.Product;
 import org.bookstorebackend.entity.User;
 import org.bookstorebackend.exception.ResourceNotFoundException;
+import org.bookstorebackend.messaging.OrderCreatedEvent;
+import org.bookstorebackend.messaging.OrderEventProducer;
 import org.bookstorebackend.repository.CartItemRepository;
 import org.bookstorebackend.repository.OrderRepository;
 import org.bookstorebackend.repository.ProductRepository;
@@ -30,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final OrderEventProducer orderEventProducer;
 
 
     @Override
@@ -86,6 +89,15 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalPrice(totalPrice);
 
         Order savedOrder = orderRepository.save(order);
+
+        // Send order created event to RabbitMQ
+        OrderCreatedEvent event = new OrderCreatedEvent(
+                savedOrder.getId(),
+                user.getId(),
+                savedOrder.getTotalPrice()
+        );
+
+        orderEventProducer.sendOrderCreatedEvent(event);
 
         // Clear user's cart after successful order
         cartItemRepository.deleteAll(cartItems);
@@ -145,6 +157,16 @@ public class OrderServiceImpl implements OrderService {
         // Save order
         Order savedOrder = orderRepository.save(order);
 
+
+       // Send order created event to RabbitMQ
+        OrderCreatedEvent event = new OrderCreatedEvent(
+                savedOrder.getId(),
+                user.getId(),
+                savedOrder.getTotalPrice()
+        );
+
+        orderEventProducer.sendOrderCreatedEvent(event);
+
         return mapToResponse(savedOrder);
     }
 
@@ -180,8 +202,7 @@ public class OrderServiceImpl implements OrderService {
                         .stream()
                         .map(orderItem -> {
 
-                            Product product =
-                                    orderItem.getProduct();
+                            Product product = orderItem.getProduct();
 
                             return OrderItemResponseDTO.builder()
                                     .productId(product.getId())

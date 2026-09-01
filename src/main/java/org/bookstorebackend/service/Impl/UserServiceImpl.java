@@ -2,13 +2,17 @@ package org.bookstorebackend.service.Impl;
 import lombok.RequiredArgsConstructor;
 import org.bookstorebackend.dto.request.LoginRequestDTO;
 import org.bookstorebackend.dto.request.RegisterRequestDTO;
+import org.bookstorebackend.dto.request.UpdateUserRequestDTO;
 import org.bookstorebackend.dto.response.LoginResponseDTO;
 import org.bookstorebackend.dto.response.RegisterResponseDTO;
 import org.bookstorebackend.entity.User;
+import org.bookstorebackend.exception.ResourceNotFoundException;
 import org.bookstorebackend.mapper.UserMapper;
 import org.bookstorebackend.repository.UserRepository;
 import org.bookstorebackend.service.UserService;
 import org.bookstorebackend.util.JwtUtil;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,5 +60,50 @@ import org.springframework.stereotype.Service;
                     .role(user.getRole().name())
                     .token(token)
                     .build();
+        }
+        @Override
+        public void updateUser(UpdateUserRequestDTO request) {
+
+            User user = getLoggedInUser();
+
+            if (request.getFirstName() != null &&
+                    !request.getFirstName().isBlank()) {
+
+                user.setFirstName(request.getFirstName());
+            }
+
+            if (request.getLastName() != null &&
+                    !request.getLastName().isBlank()) {
+
+                user.setLastName(request.getLastName());
+            }
+
+            if (request.getEmail() != null &&
+                    !request.getEmail().isBlank()) {
+
+                if (!user.getEmail().equals(request.getEmail())
+                        && userRepository.existsByEmail(request.getEmail())) {
+
+                    throw new RuntimeException("Email already exists");
+                }
+
+                user.setEmail(request.getEmail());
+            }
+            userRepository.save(user);
+        }
+
+        private User getLoggedInUser() {
+
+            Authentication authentication = SecurityContextHolder
+                            .getContext()
+                            .getAuthentication();
+
+            String email = authentication.getName();
+
+            return userRepository.findByEmail(email)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "User not found"
+                            ));
         }
     }

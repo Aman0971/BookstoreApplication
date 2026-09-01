@@ -10,6 +10,8 @@ import org.bookstorebackend.mapper.ProductMapper;
 import org.bookstorebackend.repository.ProductRepository;
 import org.bookstorebackend.service.ProductService;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.List;
         private final ProductMapper productMapper;
 
         @Override
+        @CacheEvict(value = "products", allEntries = true)
         public ProductResponseDTO addBook(ProductRequestDTO request) {
 
             Product product = productMapper.toEntity(request);
@@ -30,6 +33,7 @@ import java.util.List;
         }
 
         @Override
+        @CacheEvict(value = "products", allEntries = true)
         public ProductResponseDTO updateBook(Long productId,
                                              ProductRequestDTO request) {
             Product product = productRepository.findById(productId)
@@ -42,6 +46,7 @@ import java.util.List;
         }
 
         @Override
+        @CacheEvict(value = "products", allEntries = true)
         public void deleteBook(Long productId) {
 
             Product product = productRepository.findById(productId)
@@ -51,6 +56,7 @@ import java.util.List;
         }
 
         @Override
+        @Cacheable(value = "products")
         public List<ProductResponseDTO> getAllBooks(){
             return productRepository.findAll()
                     .stream()

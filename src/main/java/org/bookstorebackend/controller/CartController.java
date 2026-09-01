@@ -1,7 +1,9 @@
 package org.bookstorebackend.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.bookstorebackend.dto.request.AddMultipleCartRequestDTO;
 import org.bookstorebackend.dto.response.CartItemResponseDTO;
 import org.bookstorebackend.service.CartService;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,12 @@ public class CartController {
         return ResponseEntity.ok(cartService.addToCart(productId)
         );
     }
+    @PostMapping("/add-multiple-cart")
+    public ResponseEntity<List<CartItemResponseDTO>> addMultipleToCart(
+            @Valid @RequestBody AddMultipleCartRequestDTO request) {
 
+        return ResponseEntity.ok(cartService.addMultipleToCart(request));
+    }
     @PutMapping("/cart-quantity/{cartItemId}")
     public ResponseEntity<CartItemResponseDTO> updateQuantity(
                 @PathVariable Long cartItemId,
