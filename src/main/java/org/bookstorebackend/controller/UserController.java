@@ -2,9 +2,7 @@ package org.bookstorebackend.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.bookstorebackend.dto.request.LoginRequestDTO;
-import org.bookstorebackend.dto.request.RegisterRequestDTO;
-import org.bookstorebackend.dto.request.UpdateUserRequestDTO;
+import org.bookstorebackend.dto.request.*;
 import org.bookstorebackend.dto.response.LoginResponseDTO;
 import org.bookstorebackend.dto.response.OrderResponseDTO;
 import org.bookstorebackend.dto.response.ProductResponseDTO;
@@ -68,5 +66,11 @@ public class UserController {
 
         userService.updateUser(request);
         return ResponseEntity.ok("User details updated successfully");
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductResponseDTO>> searchBooks(
+            @RequestParam String keyword) {
+
+        return ResponseEntity.ok(productService.searchBooks(keyword));
     }
 }

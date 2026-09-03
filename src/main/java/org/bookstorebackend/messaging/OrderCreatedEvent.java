@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
         private Long orderId;
         private Long userId;
+        private String userEmail;
         private Double totalAmount;
     }
 

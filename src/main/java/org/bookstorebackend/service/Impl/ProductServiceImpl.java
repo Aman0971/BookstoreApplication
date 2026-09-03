@@ -63,5 +63,20 @@ import java.util.List;
                     .map(productMapper::toResponse)
                     .toList();
         }
+        @Override
+        public List<ProductResponseDTO> searchBooks(String keyword){
+
+          List<Product> products =
+                productRepository
+                        .findByBookNameContainingIgnoreCaseOrAuthorContainingIgnoreCase(
+                                keyword,
+                                keyword
+                        );
+
+          return products.stream()
+                .map(productMapper::toResponse)
+                .toList();
+        }
+
     }
 

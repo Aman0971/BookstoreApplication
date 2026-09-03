@@ -12,4 +12,5 @@ public interface ProductService {
                 ProductRequestDTO request);
         void deleteBook(Long productId);
         List<ProductResponseDTO> getAllBooks();
+        List<ProductResponseDTO> searchBooks(String keyword);
     }

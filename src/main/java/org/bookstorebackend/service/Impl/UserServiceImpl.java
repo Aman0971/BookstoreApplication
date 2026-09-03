@@ -1,22 +1,25 @@
 package org.bookstorebackend.service.Impl;
 import lombok.RequiredArgsConstructor;
-import org.bookstorebackend.dto.request.LoginRequestDTO;
-import org.bookstorebackend.dto.request.RegisterRequestDTO;
-import org.bookstorebackend.dto.request.UpdateUserRequestDTO;
+import org.bookstorebackend.dto.request.*;
 import org.bookstorebackend.dto.response.LoginResponseDTO;
 import org.bookstorebackend.dto.response.RegisterResponseDTO;
 import org.bookstorebackend.entity.User;
 import org.bookstorebackend.exception.ResourceNotFoundException;
 import org.bookstorebackend.mapper.UserMapper;
 import org.bookstorebackend.repository.UserRepository;
+import org.bookstorebackend.service.EmailService;
 import org.bookstorebackend.service.UserService;
 import org.bookstorebackend.util.JwtUtil;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-    @Service
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+@Service
     @RequiredArgsConstructor
     public class UserServiceImpl implements UserService {
 
@@ -24,6 +27,8 @@ import org.springframework.stereotype.Service;
         private final UserMapper userMapper;
         private final PasswordEncoder passwordEncoder;
         private final JwtUtil jwtUtil;
+        private final EmailService emailService;
+        private final RedisTemplate<String, Object> redisTemplate;
 
         @Override
         public RegisterResponseDTO register(RegisterRequestDTO request) {
@@ -92,6 +97,63 @@ import org.springframework.stereotype.Service;
             userRepository.save(user);
         }
 
+        @Override
+        public void forgotPassword(ForgotPasswordRequestDTO dto) {
+
+            User user = userRepository.findByEmail(dto.getEmail())
+                    .orElseThrow(() ->
+                            new RuntimeException("User not found with email: " + dto.getEmail())
+                    );
+
+            String otp = String.format(
+                    "%06d",
+                    new Random().nextInt(1000000)
+            );
+
+            String redisKey = "password-reset:" + user.getEmail();
+
+            redisTemplate.opsForValue().set(
+                    redisKey,
+                    otp,
+                    5,
+                    TimeUnit.MINUTES
+            );
+
+            emailService.sendOtpEmail(
+                    user.getEmail(),
+                    otp
+            );
+        }
+    @Override
+    public void resetPassword(ResetPasswordRequestDTO dto) {
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+            throw new RuntimeException("New password and confirm password do not match");
+        }
+        String redisKey = "password-reset:" + dto.getEmail();
+
+        Object storedOtp = redisTemplate.opsForValue().get(redisKey);
+
+        if (storedOtp == null) {
+            throw new RuntimeException("OTP expired or not found");
+        }
+
+        if (!storedOtp.toString().equals(dto.getOtp())) {
+            throw new RuntimeException("Invalid OTP");
+        }
+
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() ->
+                        new RuntimeException("User not found with email: " + dto.getEmail())
+                );
+
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+
+        userRepository.save(user);
+
+        // OTP can be used only once
+        redisTemplate.delete(redisKey);
+    }
+    
         private User getLoggedInUser() {
 
             Authentication authentication = SecurityContextHolder

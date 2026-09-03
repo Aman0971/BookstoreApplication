@@ -94,6 +94,7 @@ public class OrderServiceImpl implements OrderService {
         OrderCreatedEvent event = new OrderCreatedEvent(
                 savedOrder.getId(),
                 user.getId(),
+                user.getEmail(),
                 savedOrder.getTotalPrice()
         );
 
@@ -162,6 +163,7 @@ public class OrderServiceImpl implements OrderService {
         OrderCreatedEvent event = new OrderCreatedEvent(
                 savedOrder.getId(),
                 user.getId(),
+                user.getEmail(),
                 savedOrder.getTotalPrice()
         );
 
