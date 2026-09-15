@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
             user.setEmail(request.getEmail());
+            user.setPhoneNumber(request.getPhoneNumber());
 
             user.setPassword(passwordEncoder.encode(request.getPassword()));
 
@@ -46,6 +47,7 @@ import org.springframework.stereotype.Service;
                     .firstName(savedUser.getFirstName())
                     .lastName(savedUser.getLastName())
                     .email(savedUser.getEmail())
+                    .phoneNumber(savedUser.getPhoneNumber())
                     .role(savedUser.getRole().name())
                     .build();
         }

@@ -63,6 +63,7 @@ import java.util.List;
                     .bookName(product.getBookName())
                     .author(product.getAuthor())
                     .price(product.getPrice())
+                    .bookImage(product.getBookImage())
                     .build();
         }
 
@@ -98,6 +99,7 @@ import java.util.List;
                                 .bookName(product.getBookName())
                                 .author(product.getAuthor())
                                 .price(product.getPrice())
+                                .bookImage(product.getBookImage())
                                 .build();
                     })
                     .toList();

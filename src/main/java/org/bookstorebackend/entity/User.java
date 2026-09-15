@@ -27,6 +27,11 @@ public class User {
         @Column(nullable = false, unique = true)
         private String email;
 
+
+//        if i put unique = true in phone number then i can not put same phone number in different emails.
+        @Column(nullable = false)
+        private String phoneNumber;
+
         @Column(nullable = false)
         private String password;
 

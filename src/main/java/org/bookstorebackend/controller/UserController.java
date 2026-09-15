@@ -55,6 +55,13 @@ public class UserController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+    @GetMapping("/my-orders")
+    public ResponseEntity<List<OrderResponseDTO>> getMyOrders() {
+
+        List<OrderResponseDTO> orders = orderService.getMyOrders();
+
+        return ResponseEntity.ok(orders);
+    }
 
     @GetMapping("/get/books")
     public ResponseEntity<List<ProductResponseDTO>> getAllBooks(){

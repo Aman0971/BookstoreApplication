@@ -26,5 +26,5 @@ import lombok.Setter;
         @PositiveOrZero
         private Integer quantity;
 
-//        private String bookImage;
+        private String bookImage;
     }

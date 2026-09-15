@@ -12,5 +12,6 @@ public class OrderItemResponseDTO {
     private Integer quantity;
     private Double price;
     private Double totalPrice;
+    private String bookImage;
 }
 

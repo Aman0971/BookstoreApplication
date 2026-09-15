@@ -180,6 +180,7 @@ import java.util.List;
         }
 
         @Override
+        @Transactional
         public List<CartItemResponseDTO> getCartItems() {
 
             User user = getLoggedInUser();
@@ -192,8 +193,7 @@ import java.util.List;
 
         private User getLoggedInUser() {
 
-            Authentication authentication =
-                    SecurityContextHolder.getContext().getAuthentication();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             String email = authentication.getName();
 
@@ -214,6 +214,7 @@ import java.util.List;
                     .quantity(cartItem.getQuantity())
                     .price(product.getPrice())
                     .totalPrice(product.getPrice() * cartItem.getQuantity())
+                    .bookImage(product.getBookImage())
                     .build();
         }
 

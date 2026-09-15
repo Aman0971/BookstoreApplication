@@ -27,9 +27,9 @@ public class RegisterRequestDTO {
         @Size(min = 8, message = "Password must contain at least 8 characters")
         private String password;
 
-//        @Pattern(
-//                regexp = "^[0-9]{10}$",
-//                message = "Phone number must contain 10 digits"
-//        )
-//        private String phoneNumber;
+        @Pattern(
+                regexp = "^[0-9]{10}$",
+                message = "Phone number must contain 10 digits"
+        )
+        private String phoneNumber;
 }

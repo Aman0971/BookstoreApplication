@@ -36,6 +36,10 @@ import java.util.concurrent.TimeUnit;
             if (userRepository.existsByEmail(request.getEmail())) {
                 throw new RuntimeException("Email already registered");
             }
+            if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+                throw new RuntimeException("Phone number already registered");
+            }
+
             User user = userMapper.toEntity(request);
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             User savedUser = userRepository.save(user);
@@ -62,6 +66,7 @@ import java.util.concurrent.TimeUnit;
                     .firstName(user.getFirstName())
                     .lastName(user.getLastName())
                     .email(user.getEmail())
+                    .phoneNumber(user.getPhoneNumber())
                     .role(user.getRole().name())
                     .token(token)
                     .build();
@@ -93,6 +98,11 @@ import java.util.concurrent.TimeUnit;
                 }
 
                 user.setEmail(request.getEmail());
+            }
+            if (request.getPhoneNumber() != null &&
+                    !request.getPhoneNumber().isBlank()) {
+
+                user.setPhoneNumber(request.getPhoneNumber());
             }
             userRepository.save(user);
         }

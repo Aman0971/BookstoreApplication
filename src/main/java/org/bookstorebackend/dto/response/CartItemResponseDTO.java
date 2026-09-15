@@ -15,4 +15,5 @@ public class CartItemResponseDTO {
     private String author;
     private Double price;
     private Double totalPrice;
+    private String bookImage;
 }

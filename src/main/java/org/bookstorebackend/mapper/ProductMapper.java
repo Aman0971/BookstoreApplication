@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
                     .description(request.getDescription())
                     .price(request.getPrice())
                     .quantity(request.getQuantity())
-//                    .bookImage(request.getBookImage())
+                    .bookImage(request.getBookImage())
                     .build();
         }
 
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
                     .description(product.getDescription())
                     .price(product.getPrice())
                     .quantity(product.getQuantity())
-//                    .bookImage(product.getBookImage())
+                    .bookImage(product.getBookImage())
                     .build();
         }
 
@@ -41,6 +41,6 @@ import org.springframework.stereotype.Component;
             product.setDescription(request.getDescription());
             product.setPrice(request.getPrice());
             product.setQuantity(request.getQuantity());
-//            product.setBookImage(request.getBookImage());
+            product.setBookImage(request.getBookImage());
         }
     }

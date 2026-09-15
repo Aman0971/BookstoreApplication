@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public OrderResponseDTO addOrder() {
 
         User user = getLoggedInUser();
@@ -107,6 +109,7 @@ public class OrderServiceImpl implements OrderService {
     }
     @Override
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public OrderResponseDTO buyNow(Long productId, Integer quantity) {
 
         User user = getLoggedInUser();
@@ -181,6 +184,19 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderResponseDTO> getMyOrders() {
+
+        User user = getLoggedInUser();
+
+        List<Order> orders = orderRepository.findByUser(user);
+
+        return orders.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     private User getLoggedInUser() {
 
         Authentication authentication =
@@ -216,6 +232,7 @@ public class OrderServiceImpl implements OrderService {
                                             orderItem.getPrice()
                                                     * orderItem.getQuantity()
                                     )
+                                    .bookImage(product.getBookImage())
                                     .build();
                         })
                         .toList();

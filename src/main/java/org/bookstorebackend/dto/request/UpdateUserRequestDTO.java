@@ -13,5 +13,7 @@ import lombok.Setter;
         
         private String firstName;
         private String lastName;
+
+        private String phoneNumber;
     }
 

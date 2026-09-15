@@ -7,4 +7,5 @@ public interface OrderService {
     OrderResponseDTO addOrder();
     OrderResponseDTO buyNow(Long productId, Integer quantity);
     List<OrderResponseDTO> getAllOrders();
+    List<OrderResponseDTO> getMyOrders();
 }

@@ -12,4 +12,5 @@ public class WishlistItemResponseDTO {
     private String bookName;
     private String author;
     private Double price;
+    private String bookImage;
 }

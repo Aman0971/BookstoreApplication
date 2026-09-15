@@ -33,7 +33,8 @@ import java.time.LocalDateTime;
         @Column(nullable = false)
         private Integer quantity;
 
-//        private String bookImage;
+        @Column(columnDefinition = "TEXT")
+        private String bookImage;
 
         @Column(nullable = false, updatable = false)
         private LocalDateTime createdAt;
